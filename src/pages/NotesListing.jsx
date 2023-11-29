@@ -1,19 +1,25 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { IoIosAdd } from "react-icons/io";
 import { useMediaQuery } from "react-responsive";
+import { RiDeleteBin6Line } from "react-icons/ri";
 
 import { Button } from "../components";
+import { deleteNote } from "../store/rootSlice";
 
 const NotesListing = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const isMobile = useMediaQuery({
     query: "(max-width: 650px)",
   });
 
   const notes = useSelector((state) => state.root.notes);
+
+  const onHandleDelete = (id) => {
+    dispatch(deleteNote(id));
+  };
 
   return (
     <div className="p-4 md:py-10 md:px-40 lg:py-14 lg:px-48 h-screen bg-[#f2f4f7]">
@@ -35,11 +41,22 @@ const NotesListing = () => {
           notes?.map((item) => (
             <div
               key={item.id}
-              className="bg-white p-5 rounded-md my-4 cursor-pointer"
+              className="flex flex-row items-center justify-between bg-white p-5 rounded-md my-4 cursor-pointer"
               onClick={() => navigate(`/note/${item.id}`)}
             >
-              <p className="text-lg font-semibold">{item.title}</p>
-              <p className="font-light">{item.createdDate}</p>
+              <div>
+                <p className="text-lg font-semibold">{item.title}</p>
+                <p className="font-light">{item.createdDate}</p>
+              </div>
+              <div
+                className="cursor-pointer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onHandleDelete(item.id);
+                }}
+              >
+                <RiDeleteBin6Line size="25px" color="red" />
+              </div>
             </div>
           ))}
       </div>
